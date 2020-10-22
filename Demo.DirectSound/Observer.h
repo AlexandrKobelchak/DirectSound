@@ -10,7 +10,7 @@ class Observer
 	LPDIRECTSOUNDCAPTURE m_lpDirectSoundCapture;
 
 public:	
-	static BOOL CALLBACK MyDlgProc(HWND, UINT, WPARAM, LPARAM);
+	static INT_PTR CALLBACK MyDlgProc(HWND, UINT, WPARAM, LPARAM);
 	static BOOL CALLBACK DSEnumProc(LPGUID, LPCTSTR, LPCTSTR, LPVOID);
 private:
 
@@ -20,5 +20,6 @@ private:
 	void OnCommand(HWND, int, HWND, UINT);
 	void OpenMediaFile();
 	void PlayMediaFile(LPTSTR fileName);
+	BOOL CreateBasicBuffer(LPDIRECTSOUND lpDirectSound, LPDIRECTSOUNDBUFFER* lplpDsb);
 };
 

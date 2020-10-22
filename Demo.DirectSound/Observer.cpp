@@ -20,7 +20,7 @@ BOOL CALLBACK Observer::DSEnumProc(
 	return TRUE;
 }
 
-BOOL CALLBACK Observer::MyDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
+INT_PTR Observer::MyDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 
 	static Observer obs(hDlg);
 
@@ -92,7 +92,7 @@ void Observer::OpenMediaFile()
 	WCHAR fileName[_MAX_PATH] = L"";
 	//ofn.hInstance = m_hInstance;
 	ofn.hwndOwner = m_hDlg;
-	ofn.lpstrFilter = L"All Files\0\*.*\0Wav Files(*.wav)\0*.wav\0\0";
+	ofn.lpstrFilter = L"All Files\0*.*\0Wav Files(*.wav)\0*.wav\0\0";
 	ofn.lpstrTitle = L"Open File";
 	ofn.nMaxFile = _MAX_PATH;
 	ofn.lpstrFile = fileName;
@@ -130,8 +130,27 @@ void Observer::PlayMediaFile(LPTSTR fileName)
 }
 
 
-BOOL CreateBasicBuffer(LPDIRECTSOUND lpDirectSound, LPDIRECTSOUNDBUFFER* lplpDsb) {
+BOOL Observer::CreateBasicBuffer(LPDIRECTSOUND lpDirectSound, LPDIRECTSOUNDBUFFER* lplpDsb) {
 	
 	PCMWAVEFORMAT pcwf = { sizeof(PCMWAVEFORMAT) };
+	pcwf.wf.wFormatTag = WAVE_FORMAT_PCM;
+	pcwf.wf.nChannels = 2;//stereo
+	pcwf.wf.nSamplesPerSec = 22050;//
+	pcwf.wf.nBlockAlign = 4;
+	pcwf.wf.nAvgBytesPerSec = pcwf.wf.nSamplesPerSec * pcwf.wf.nBlockAlign;
+	pcwf.wBitsPerSample = 16;
 
+	DSBUFFERDESC dsb = { sizeof(DSBUFFERDESC) };
+	dsb.dwFlags = DSBCAPS_STATIC;
+	dsb.dwBufferBytes = 3 * pcwf.wf.nAvgBytesPerSec;
+	dsb.lpwfxFormat = (LPWAVEFORMATEX) &pcwf;
+
+	HRESULT hr = lpDirectSound->CreateSoundBuffer(&dsb, lplpDsb, NULL);
+
+	if (DS_OK != hr) {
+		lplpDsb = nullptr;
+		return FALSE;
+	}
+
+	return TRUE;
 }
