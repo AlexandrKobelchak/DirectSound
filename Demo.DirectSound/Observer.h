@@ -1,10 +1,17 @@
 #pragma once
 #include "stdafx.h"
 
+#include "WaveSoundReader.h"
+
 class Observer
 {
-	Observer(HWND hWnd) : m_hDlg(hWnd) {
+	WaveSoundReader m_srReader;
+
+	Observer(HWND hWnd) 
+		: m_hDlg(hWnd), m_lpDirectSound(nullptr), m_lpDirectSoundCapture(nullptr){
 	}
+
+
 	HWND m_hDlg;
 	LPDIRECTSOUND m_lpDirectSound;
 	LPDIRECTSOUNDCAPTURE m_lpDirectSoundCapture;
@@ -21,5 +28,7 @@ private:
 	void OpenMediaFile();
 	void PlayMediaFile(LPTSTR fileName);
 	BOOL CreateBasicBuffer(LPDIRECTSOUND lpDirectSound, LPDIRECTSOUNDBUFFER* lplpDsb);
+	BOOL AppCreateWritePrimaryBuffer(LPDIRECTSOUND, LPDIRECTSOUNDBUFFER*, LPDWORD, HWND);
+	BOOL AppWriteDataToBuffer(LPDIRECTSOUNDBUFFER lpDsb, DWORD dwOffset, LPBYTE lpbSoundData, DWORD dwSoundBytes);
 };
 

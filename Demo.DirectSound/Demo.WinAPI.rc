@@ -51,9 +51,9 @@ END
 /////////////////////////////////////////////////////////////////////////////
 // Neutral (Default) (unknown sub-lang: 0x8) resources
 
-#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ZZZ)
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
 LANGUAGE LANG_NEUTRAL, 0x8
-#pragma code_page(1251)
+#pragma code_page(1252)
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -70,6 +70,7 @@ BEGIN
     COMBOBOX        IDC_COMBO_DEVICES,7,7,126,30,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_TABSTOP
     COMBOBOX        IDC_COMBO_CAPTURE_DEVICES,176,7,126,30,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_TABSTOP
     PUSHBUTTON      "Open File",IDC_BUTTON_OPEN,82,45,50,14
+    PUSHBUTTON      "Play",IDC_BUTTON_PLAY,146,45,50,14
 END
 
 
