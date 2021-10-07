@@ -12,7 +12,7 @@ WaveSoundReader::~WaveSoundReader() {
 	delete m_pWfx;
 }
 
-HRESULT WaveSoundReader::Open(wchar_t* fileName) {
+HRESULT WaveSoundReader::Open(wchar_t* fileName) {  //Open File to read data
 
 	delete m_pWfx;
 
@@ -87,6 +87,70 @@ HRESULT WaveSoundReader::Open(wchar_t* fileName) {
 }
 
 
-HRESULT WaveSoundReader::Reset() { return S_OK; }
-HRESULT WaveSoundReader::Read(UINT, BYTE*, UINT*) { return S_OK; }
-HRESULT WaveSoundReader::Close() { return S_OK; }
+HRESULT WaveSoundReader::Reset() { //Set pointer m_ckIn to begin data section
+	
+	if (mmioSeek(m_hMMIOIn, m_ckInRiff.dwDataOffset + sizeof(FOURCC), SEEK_SET) < 0) {
+		
+		return E_FAIL;
+	}
+
+	m_ckIn.ckid = mmioFOURCC('d', 'a', 't', 'a');
+	
+	if (mmioDescend(m_hMMIOIn, &m_ckIn, &m_ckInRiff, MMIO_FINDCHUNK)!=0) {
+
+		return E_FAIL;
+	}
+
+	return S_OK; 
+}
+
+// Считывает аудиоинформацию из файла и записывает в m_ckIn
+// количество считанных байт. Перед вызовом функции следует
+// убедиться, что текущая позиция чтения в файле расположена
+// на начале блока данных
+
+HRESULT WaveSoundReader::Read(
+	UINT nSizeToRead, //число считываемых байт
+	BYTE* pbData,     //указатель на заполняемый буфер
+	UINT* pnSizeRead  //число реально считаных байт
+) {
+	
+	MMIOINFO mmioinfoIn;
+	*pnSizeRead = 0;
+
+	if (0 != mmioGetInfo(m_hMMIOIn, &mmioinfoIn, 0)) {
+
+		return E_FAIL;
+	}
+
+	UINT cbDataIn = nSizeToRead > m_ckIn.cksize ?
+		m_ckIn.cksize : nSizeToRead;
+	
+	m_ckIn.cksize -= cbDataIn;
+
+	for (BYTE* pDataSource = pbData; pDataSource != pbData + cbDataIn; ++pDataSource, ++ mmioinfoIn.pchNext) {
+
+		if (mmioinfoIn.pchNext == mmioinfoIn.pchEndRead) {
+		
+			if (mmioAdvance(m_hMMIOIn, &mmioinfoIn, MMIO_READ) != 0 ) {
+				return E_FAIL;
+			}
+			if (mmioinfoIn.pchNext == mmioinfoIn.pchEndRead) {
+				return E_FAIL;
+			}
+		}
+		*pDataSource = *mmioinfoIn.pchNext;
+	}
+
+	if (mmioSetInfo(m_hMMIOIn, &mmioinfoIn, 0) != 0) {
+		return E_FAIL;
+	}
+	*pnSizeRead = cbDataIn;
+
+	return S_OK; 
+}
+HRESULT WaveSoundReader::Close() { 
+
+	mmioClose(m_hMMIOIn, 0);
+	return S_OK; 
+}

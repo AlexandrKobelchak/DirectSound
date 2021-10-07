@@ -139,12 +139,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="DSB_Static.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Observer.cpp" />
     <ClCompile Include="SoundLib.cpp" />
     <ClCompile Include="WaveSoundReader.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DSB_Static.h" />
     <ClInclude Include="Observer.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="SoundLib.h" />
