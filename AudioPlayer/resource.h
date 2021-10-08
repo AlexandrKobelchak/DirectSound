@@ -5,7 +5,7 @@
 #define IDD_DIALOG1                     101
 #define IDC_BUTTON_OPEN                 1001
 #define IDC_EDIT1                       1002
-#define IDC_CHECK1                      1003
+#define IDC_EDIT_FILENAME               1002
 #define IDC_CHECK_RING                  1003
 
 // Next default values for new objects
