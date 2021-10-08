@@ -160,7 +160,10 @@ HRESULT DSB_Static::PlayBuffer(WaveSoundReader* pSoundReader, BOOL bLooped, DWOR
     //Unlock buffer because он больше не нужен
     m_pDSBuffer->Unlock(pbData_1, dsbd.dwBufferBytes, NULL, 0);
     pbData_1 = nullptr;
-    delete pbWavData;
+    
+    //informatin from audiofile delete;
+    delete[] pbWavData;
+
     //after buffer creating, it is playing
     if (FAILED(hr = m_pDSBuffer->GetStatus(&dwStatus))) {
         return hr;
